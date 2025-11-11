@@ -23,9 +23,9 @@ Demon baby goes into different circles of hell in flappy bird style game mock-up
 
 - Will need to learn how to create pillars baby is unable to hit(putting in pngs).
 
--Putting in score and lvl tracking
+- Putting in score and lvl tracking
 
--Changing background once new lvl is hit
+- Changing background once new lvl is hit
 
 ## Outcomes
 Ideal Outcome:
@@ -53,6 +53,6 @@ Minimal Viable Outcome:
 - Week 3 (Final)
   1. Goal 1
   adding changing background
-  
+
   2. Goal 2
   adding sound fx
