@@ -12,3 +12,8 @@ class BG(pygame.sprite.Sprite):
 
         self.image = pygame.transform.scale(bg_image,(full_width, full_height))
         self.rect = self.image.get_rect(topleft = (0,0))
+        self.pos = pygame.math.Vector2(self.rect.topleft)
+
+    def update(sef, dt):
+        self.pos.x -= 300
+        
