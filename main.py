@@ -1,6 +1,6 @@
 import pygame, sys, time
 from settings import *
-from sprites import BG
+from sprites import BG, Ground
 
 class Game: 
     def __init__(self): #function that runs when new object is created
@@ -22,7 +22,7 @@ class Game:
 
         #sprite setup
         BG(self.all_sprites, self.scale_factor) #make bg sprite, scale it to screen, and add to main sprite group so it appears in game
-
+        Ground(self.all_sprites, self.scale_factor)
     def run(self): #func will run main logic of gamw
         last_time = time.time() #store current time (in seconds) in variable called last_time
         while True: 
