@@ -1,6 +1,6 @@
 import pygame, sys, time
 from settings import *
-from sprites import BG, Ground
+from sprites import BG, Ground,  Baby
 
 class Game: 
     def __init__(self): #function that runs when new object is created
@@ -23,6 +23,8 @@ class Game:
         #sprite setup
         BG(self.all_sprites, self.scale_factor) #make bg sprite, scale it to screen, and add to main sprite group so it appears in game
         Ground(self.all_sprites, self.scale_factor)
+        self.baby = Baby(self.all_sprites, self.scale_factor/ 0.8)
+
     def run(self): #func will run main logic of gamw
         last_time = time.time() #store current time (in seconds) in variable called last_time
         while True: 
@@ -35,6 +37,9 @@ class Game:
                 if event.type == pygame.QUIT: #go through all events pygame has registered since last frame
                     pygame.quit()
                     sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                     self.baby.jump()
+
             #game logic
             self.display_surface.fill('black') #fills entire game window w black color
             self.all_sprites.update(dt) #tells all sprites in all sprites group to update themselves
