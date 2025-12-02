@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+from random import choice, randint
 
 class BG(pygame.sprite.Sprite): #creates bg object that behaves like pygame sprite
     def __init__(self,groups, scale_factor): #runs setup: which group it belongs to and how big it should be
@@ -28,7 +29,7 @@ class BG(pygame.sprite.Sprite): #creates bg object that behaves like pygame spri
 class Ground(pygame.sprite.Sprite):
     def __init__(self,groups,scale_factor):
         super().__init__(groups)
-
+        self.sprite_type = 'ground'
         #image
         ground_surf = pygame.image.load('environment/ground.png').convert_alpha()
         self.image = pygame.transform.scale(ground_surf, pygame.math.Vector2 (ground_surf.get_size()) * scale_factor)
@@ -37,6 +38,8 @@ class Ground(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(bottomleft = (0,WINDOW_HEIGHT))
         self.pos = pygame.math.Vector2(self.rect.topleft)
 
+        #mask
+        self.mask = pygame.mask.from_surface(self.image)
     def update(self, dt):
         self.pos.x -= 360 * dt
         if self.rect.centerx < 0:
@@ -60,6 +63,9 @@ class Baby(pygame.sprite.Sprite):
         #movement
         self.gravity = 600
         self.direction = 0
+
+        #mask
+        self.mask = pygame.mask.from_surface(self.image)
     
     def import_frames(self,scale_factor):
         self.frames = []
@@ -76,5 +82,40 @@ class Baby(pygame.sprite.Sprite):
     def jump(self):
         self.direction = - 400
 
+    def animate(self,dt):
+        self.frame_index += 10 * dt
+        if self.frame_index >= len(self.frames):
+            self.frame_index = 0
+        self.image = self.frames[int(self.frame_index)]
+
+    def rotate(self): 
+        rotated_baby = pygame.transform.rotozoom(self.image,-self.direction * 0.06,1)
+        self.image = rotated_baby
+        self.mask = pygame.mask.from_surface(self.image)
     def update(self,dt):
         self.apply_gravity(dt)
+        self.animate(dt)
+        self.rotate()
+
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self,groups,scale_factor):
+        super().__init__(groups)
+        self.sprite_type = 'obstacle'
+
+        orientation = choice(('up', 'down'))
+        surf = pygame.image.load(f'obstacles/Snakes {choice( (2, 3) )}.png').convert_alpha()
+        self.image = pygame.transform.scale(surf,pygame.math.Vector2(surf.get_size())* scale_factor)
+
+        x = WINDOW_WIDTH + randint(40,100)
+        y = WINDOW_HEIGHT + randint(10,50)
+        self.rect = self.image.get_rect(midbottom = (x,y))
+
+        self.pos = pygame.math.Vector2(self.rect.topleft)
+        
+        #mask
+        self.mask = pygame.mask.from_surface(self.image)
+    def update(self,dt):
+        self.pos.x -= 400 * dt
+        self.rect.x = round(self.pos.x)
+        if self.rect.right <= -100:
+            self.kill()

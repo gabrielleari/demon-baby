@@ -1,6 +1,6 @@
 import pygame, sys, time
 from settings import *
-from sprites import BG, Ground,  Baby
+from sprites import BG, Ground,  Baby, Obstacle
 
 class Game: 
     def __init__(self): #function that runs when new object is created
@@ -22,9 +22,42 @@ class Game:
 
         #sprite setup
         BG(self.all_sprites, self.scale_factor) #make bg sprite, scale it to screen, and add to main sprite group so it appears in game
-        Ground(self.all_sprites, self.scale_factor)
+        Ground([self.all_sprites, self.collision_sprites], self.scale_factor)
         self.baby = Baby(self.all_sprites, self.scale_factor/ 0.8)
 
+        #timer
+        self.obstacle_timer = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.obstacle_timer,1400)
+
+        #text
+        #self.font = pygame.font.Font('font/shout font.ttf',30)
+        self.score = 0
+        self.start_offset = 0
+        
+        #menu
+        #self.menu_surf = pygame.image.load('../graphics/ui/menu.png').convert_alpha()
+        #self.menu_rect = self.menu_surf.get_rect(center = (WINDOW_WIDTH/2,WINDOW_HEIGHT/2))
+
+    def collisions(self):
+        if pygame.sprite.spritecollide(self.baby,self.collision_sprites,False, pygame.sprite.collide_mask)\
+        or self.baby.rect.top <= 0:
+            for sprite in self.collision_sprites.sprites():
+                if sprite.sprite_type == 'obstacle':
+                    sprite.kill()
+            self.active = False
+            self.baby.kill()
+
+    def display_score(self):
+        if self.active:
+            self.score = (pygame.time.get_ticks() - self.start_offset) // 1000
+            y = WINDOW_HEIGHT/10
+        else:  
+            y = WINDOW_HEIGHT / 2 + (self.menu_rect.height / 1.5)
+
+            score_surf = self.font.render(str(self.score), False, 'black')
+            score_rect = score_surf
+            score_rect = score_surf.get_rect(midtop=(WINDOW_WIDTH/2,y))
+            self.display_surface.blit(score_surf,score_rect)
     def run(self): #func will run main logic of gamw
         last_time = time.time() #store current time (in seconds) in variable called last_time
         while True: 
@@ -38,15 +71,26 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                     self.baby.jump()
-
+                    if self.active:
+                        self.baby.jump()
+                    else:
+                        self.baby = Baby(self.all_sprites, self.scale_factor / 0.8)
+                        self.active = True
+                        self.start_offset = pygame.time.get_ticks()
+                if event.type == self.obstacle_timer and self.active:
+                    Obstacle([self.all_sprites,self.collision_sprites], self.scale_factor * 1.1)  
             #game logic
             self.display_surface.fill('black') #fills entire game window w black color
             self.all_sprites.update(dt) #tells all sprites in all sprites group to update themselves
             self.all_sprites.draw(self.display_surface) #draws all sprites in the all_sprites group onto game window (display_surface)
+            self.display_score()
             pygame.display.update() #refresh game window to show everything drawn since last frame
             self.clock.tick(FRAMERATE) #limit game loop to run at maximum number of FPS
 
+            if self.active: 
+                self.collisions()
+            else:
+                self.display_surface.blit(self.menu_surf, self.menu_rect)
 if __name__ == '__main__':
         game = Game()
         game.run()
