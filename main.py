@@ -30,13 +30,14 @@ class Game:
         pygame.time.set_timer(self.obstacle_timer,1400)
 
         #text
-        #self.font = pygame.font.Font('font/shout font.ttf',30)
+        self.font = pygame.font.Font()
         self.score = 0
         self.start_offset = 0
         
         #menu
-        #self.menu_surf = pygame.image.load('../graphics/ui/menu.png').convert_alpha()
-        #self.menu_rect = self.menu_surf.get_rect(center = (WINDOW_WIDTH/2,WINDOW_HEIGHT/2))
+        self.menu_surf = pygame.image.load('environment/game over menu.png').convert_alpha()
+        self.menu_surf = pygame.transform.scale(self.menu_surf,(WINDOW_WIDTH,WINDOW_HEIGHT/1.5))
+        self.menu_rect = self.menu_surf.get_rect(center = (WINDOW_WIDTH/2,WINDOW_HEIGHT/2))
 
     def collisions(self):
         if pygame.sprite.spritecollide(self.baby,self.collision_sprites,False, pygame.sprite.collide_mask)\
@@ -54,10 +55,10 @@ class Game:
         else:  
             y = WINDOW_HEIGHT / 2 + (self.menu_rect.height / 1.5)
 
-            score_surf = self.font.render(str(self.score), False, 'black')
-            score_rect = score_surf
-            score_rect = score_surf.get_rect(midtop=(WINDOW_WIDTH/2,y))
-            self.display_surface.blit(score_surf,score_rect)
+        score_surf = self.font.render(str(self.score), False, 'black')
+        score_rect = score_surf
+        score_rect = score_surf.get_rect(midtop=(WINDOW_WIDTH/2,y))
+        self.display_surface.blit(score_surf,score_rect)
     def run(self): #func will run main logic of gamw
         last_time = time.time() #store current time (in seconds) in variable called last_time
         while True: 
@@ -84,13 +85,13 @@ class Game:
             self.all_sprites.update(dt) #tells all sprites in all sprites group to update themselves
             self.all_sprites.draw(self.display_surface) #draws all sprites in the all_sprites group onto game window (display_surface)
             self.display_score()
-            pygame.display.update() #refresh game window to show everything drawn since last frame
             self.clock.tick(FRAMERATE) #limit game loop to run at maximum number of FPS
 
             if self.active: 
                 self.collisions()
             else:
                 self.display_surface.blit(self.menu_surf, self.menu_rect)
+            pygame.display.update() #refresh game window to show everything drawn since last frame
 if __name__ == '__main__':
         game = Game()
         game.run()
