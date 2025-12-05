@@ -21,7 +21,7 @@ class Game:
         self.scale_factor = WINDOW_HEIGHT / bg_height #calculate scaling factor to resize bg img to fit window height
 
         #sprite setup
-        BG(self.all_sprites, self.scale_factor) #make bg sprite, scale it to screen, and add to main sprite group so it appears in game
+        self.bg = BG(self.all_sprites, self.scale_factor) #make bg sprite, scale it to screen, and add to main sprite group so it appears in game
         Ground([self.all_sprites, self.collision_sprites], self.scale_factor)
         self.baby = Baby(self.all_sprites, self.scale_factor/ 0.8)
 
@@ -56,9 +56,10 @@ class Game:
             y = WINDOW_HEIGHT / 2 + (self.menu_rect.height / 1.5)
 
         score_surf = self.font.render(str(self.score), False, 'black')
-        score_rect = score_surf
         score_rect = score_surf.get_rect(midtop=(WINDOW_WIDTH/2,y))
         self.display_surface.blit(score_surf,score_rect)
+        self.bg.change_background(self.score, self.scale_factor)
+
     def run(self): #func will run main logic of gamw
         last_time = time.time() #store current time (in seconds) in variable called last_time
         while True: 

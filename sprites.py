@@ -5,7 +5,8 @@ from random import choice, randint
 class BG(pygame.sprite.Sprite): #creates bg object that behaves like pygame sprite
     def __init__(self,groups, scale_factor): #runs setup: which group it belongs to and how big it should be
         super().__init__(groups) #sets up bg object as real pygame sprite and add it to the given groups
-        bg_image = pygame.image.load('environment/background1.png').convert() #loads bg image from file and convert it for faster display
+        self.background = ('environment/background1.png')
+        bg_image = pygame.image.load(self.background).convert() #loads bg image from file and convert it for faster display
         
         #.getheight method
         full_height = bg_image.get_height() * scale_factor #calculate new height of bg img after scaling
@@ -26,6 +27,25 @@ class BG(pygame.sprite.Sprite): #creates bg object that behaves like pygame spri
             self.pos.x = 0
         self.rect.x = round(self.pos.x)  #updates sprites rectangle position to match Vector2 position, rounding to an integer
     
+    def change_background(self,score,scale_factor):
+        if score > 7:
+            self.background = ('environment/background3.png')
+        elif score > 3: 
+            self.background = ('environment/background2.png')
+        else:
+            self.background = ('environment/background1.png')
+        bg_image = pygame.image.load(self.background).convert()
+        full_height = bg_image.get_height() * scale_factor #calculate new height of bg img after scaling
+        full_width = bg_image.get_width() * scale_factor #calculate new width of bg img after scaling
+
+        full_sized_image = pygame.transform.scale(bg_image,(full_width, full_height)) #resize bg img to desired height and width and store in sprite's img attribute
+       
+        self.image = pygame.Surface((full_width * 2,full_height))
+        self.image.blit(full_sized_image, (0,0))
+        self.image.blit(full_sized_image, (full_width,0))
+
+        
+
 class Ground(pygame.sprite.Sprite):
     def __init__(self,groups,scale_factor):
         super().__init__(groups)
@@ -114,6 +134,9 @@ class Obstacle(pygame.sprite.Sprite):
         
         #mask
         self.mask = pygame.mask.from_surface(self.image)
+
+
+
     def update(self,dt):
         self.pos.x -= 400 * dt
         self.rect.x = round(self.pos.x)
