@@ -30,7 +30,7 @@ class Game:
         pygame.time.set_timer(self.obstacle_timer,1400)
 
         #text
-        self.font = pygame.font.Font()
+        self.font = pygame.font.Font('environment/comicz.ttf', 30)
         self.score = 0
         self.start_offset = 0
         
